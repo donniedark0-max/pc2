@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +32,7 @@ import com.example.pece2.controlador.ArregloPostulante
 
 
 @Composable
-fun DetallePostulanteActivity(postulanteId: Int, navController: NavController = rememberNavController()) {
+fun DetallePostulanteActivity(postulanteId: Int, navController: NavController) {
     val context = LocalContext.current
     val arregloPostulante = ArregloPostulante(context)
     val postulante = remember { arregloPostulante.obtenerPostulantePorID(postulanteId) }
@@ -70,7 +71,7 @@ fun DetallePostulanteActivity(postulanteId: Int, navController: NavController = 
 
                 // Imagen del postulante (simulada)
                 Image(
-                    painter = rememberImagePainter(postulante.imagen),
+                    painter = painterResource(id = postulante.imagen.toInt()), // Convertir el string a ID si es necesario
                     contentDescription = "Imagen del postulante",
                     modifier = Modifier
                         .size(180.dp)
@@ -93,7 +94,6 @@ fun DetailRow(label: String, value: String, labelColor: Color) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
@@ -107,10 +107,4 @@ fun DetailRow(label: String, value: String, labelColor: Color) {
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DetallePostulantePreview() {
-    DetallePostulanteActivity(postulanteId = 1)
 }

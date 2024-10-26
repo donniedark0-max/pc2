@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.pece2.clases.Postulante
+import com.example.pece2.controlador.ArregloPostulante
+
 @Preview(showBackground = true)
 @Composable
 fun NuevoPostulanteActivity(navController: NavController = rememberNavController()) {
@@ -66,36 +69,55 @@ fun NuevoPostulanteActivity(navController: NavController = rememberNavController
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+            Text(text = "Nombre", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
 
-            // Campo de texto para nombre
             OutlinedTextField(
                 value = nombre,
                 onValueChange = { nombre = it },
-                label = { Text("Nombre") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                label = { Text("Nombre",
+                    color = Color.Black
+                ) },
+                keyboardOptions = KeyboardOptions
+                    (keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                )
             )
+            Text(text = "Apellido", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
 
             // Campo de texto para apellido
             OutlinedTextField(
                 value = apellido,
                 onValueChange = { apellido = it },
-                label = { Text("Apellido") },
+                label = { Text("Apellido",
+                    color = Color.Black
+                ) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                )
             )
 
+            Text(text = "DNI", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
             // Campo de texto para DNI
             OutlinedTextField(
                 value = dni,
                 onValueChange = { dni = it },
-                label = { Text("DNI") },
+                label = { Text("DNI",
+                    color = Color.Black) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(vertical = 8.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = Color.Black,
+                    focusedTextColor = Color.Black,
+                )
             )
 
             // Selección de Sexo
@@ -122,6 +144,7 @@ fun NuevoPostulanteActivity(navController: NavController = rememberNavController
             var expanded by remember { mutableStateOf(false) }
             val listaEstadoCivil = listOf("Soltero", "Casado", "Divorciado", "Viudo")
 
+            Text(text = "Estado Civil", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 8.dp))
             OutlinedTextField(
                 value = estadoCivil,
                 onValueChange = { estadoCivil = it },
@@ -156,7 +179,17 @@ fun NuevoPostulanteActivity(navController: NavController = rememberNavController
             Button(
                 onClick = {
                     if (nombre.isNotEmpty() && apellido.isNotEmpty() && dni.isNotEmpty()) {
-                        // Aquí deberías insertar el postulante en la base de datos
+                        val arregloPostulante = ArregloPostulante(context)
+                        val nuevoPostulante = Postulante(
+                            nombre = nombre,
+                            apellido = apellido,
+                            dni = dni,
+                            edad = 25,  // Puedes agregar un campo para la edad si lo necesitas
+                            sexo = sexo,
+                            estadoCivil = estadoCivil,
+                            imagen = "" // La imagen se asignará aleatoriamente en ArregloPostulante
+                        )
+                        arregloPostulante.insertarPostulante(nuevoPostulante)
                         Toast.makeText(context, "Postulante registrado correctamente", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     } else {

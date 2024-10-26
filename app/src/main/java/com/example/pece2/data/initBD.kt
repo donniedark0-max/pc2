@@ -10,7 +10,7 @@ class initBD(context: Context) : SQLiteOpenHelper(
     DATABASE_VERSION
 ){
     companion object {
-        const val DATABASE_NAME = "pece2.db"
+        const val DATABASE_NAME = "pece6.db"
         const val DATABASE_VERSION = 1
     }
     override fun onCreate(db: SQLiteDatabase) {

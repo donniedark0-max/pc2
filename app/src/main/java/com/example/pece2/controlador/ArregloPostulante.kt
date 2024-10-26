@@ -4,10 +4,33 @@ import android.content.ContentValues
 import android.content.Context
 import com.example.pece2.clases.Postulante
 import com.example.pece2.data.initBD
+import com.example.pece2.R
 
 
 class ArregloPostulante(context: Context) {
     private val dbHelper = initBD(context)
+    private val imagenesDisponibles = mutableListOf(
+        R.drawable.imagen1,
+        R.drawable.imagen2,
+        R.drawable.imagen3,
+        R.drawable.imagen4,
+        R.drawable.imagen5
+    )
+
+    private val imagenesUsadas = mutableListOf<Int>()
+
+    private fun obtenerImagenAleatoria(): Int {
+        if (imagenesDisponibles.isEmpty()) {
+            // Si todas las imágenes ya fueron usadas, reseteamos el conjunto
+            imagenesDisponibles.addAll(imagenesUsadas)
+            imagenesUsadas.clear()
+        }
+        // Seleccionar una imagen aleatoria
+        val imagenSeleccionada = imagenesDisponibles.random()
+        imagenesDisponibles.remove(imagenSeleccionada)
+        imagenesUsadas.add(imagenSeleccionada)
+        return imagenSeleccionada
+    }
 
     // Insertar postulante
     fun insertarPostulante(postulante: Postulante): Long {
@@ -15,11 +38,11 @@ class ArregloPostulante(context: Context) {
         val values = ContentValues().apply {
             put("nombre", postulante.nombre)
             put("apellido", postulante.apellido)
-            put("dni", postulante.dni)
             put("edad", postulante.edad)
+            put("dni", postulante.dni)
             put("sexo", postulante.sexo)
             put("estadoCivil", postulante.estadoCivil)
-            put("imagen", postulante.imagen)
+            put("imagen", obtenerImagenAleatoria()) // Asignar imagen aleatoria
         }
         return db.insert("postulante", null, values)
     }

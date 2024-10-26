@@ -1,6 +1,7 @@
 package com.example.pece2.adaptador
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,7 +22,7 @@ import coil.compose.rememberImagePainter
 import com.example.pece2.clases.Postulante
 
 @Composable
-fun VistaPostulante(postulante: Postulante) {
+fun VistaPostulante(postulante: Postulante, onClick: () -> Unit) {
     // Horizontal line
     Divider(
         color = Color.LightGray, // Customize the color as needed
@@ -32,7 +34,8 @@ fun VistaPostulante(postulante: Postulante) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onClick() },
     ) {
         Row(
             modifier = Modifier
@@ -51,28 +54,10 @@ fun VistaPostulante(postulante: Postulante) {
 
             // Mostrar la imagen correspondiente al postulante
             Image(
-                painter = rememberImagePainter(data = postulante.imagen),
+                painter = painterResource(id = postulante.imagen.toInt()), // Convertir el string a ID si es necesario
                 contentDescription = "Imagen del postulante",
-                modifier = Modifier.size(64.dp),
-                contentScale = ContentScale.Crop // Ajusta la escala de la imagen
+                modifier = Modifier.size(64.dp)
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun VistaPostulantePreview() {
-    VistaPostulante(
-        postulante = Postulante(
-            id = 1,
-            nombre = "Juan",
-            apellido = "Perez",
-            dni = "12345678",
-            edad = 25,
-            sexo = "Masculino",
-            estadoCivil = "Soltero",
-            imagen = "https://linkaimagen.com"
-        )
-    )
 }

@@ -1,5 +1,8 @@
 package com.example.pece2
 import android.content.Context
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,17 +37,71 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.pece2.adaptador.AdaptadorPostulante
+import com.example.pece2.controlador.ArregloPostulante
 import com.example.pece2.data.initBD
+import com.example.pece2.ui.theme.Pece2Theme
+import kotlinx.coroutines.launch
 
-@Preview(showBackground = true)
+class MainActivity : ComponentActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Establecer el contenido de la actividad utilizando Jetpack Compose
+        setContent {
+            // Aquí puedes usar el tema que has definido en tu proyecto, si tienes uno
+            Pece2Theme {
+                val navController: NavHostController = rememberNavController()
+                MainActivityContent(navController)
+            }
+        }
+    }
+}
+
 @Composable
-fun MainActivity(navController: NavController = rememberNavController()) {
+fun MainActivityContent(navController: NavHostController) {
+    // Este será el contenido de tu MainActivity, utilizando Jetpack Compose
+    NavHost(navController = navController, startDestination = "MainScreen") {
+        // Definir la pantalla principal
+        composable("MainScreen") {
+            MainScreen(navController) // La función que muestra la pantalla principal
+        }
+
+        // Definir la pantalla para agregar un nuevo postulante
+        composable("NuevoPostulanteScreen") {
+            NuevoPostulanteActivity(navController) // La función que muestra la pantalla para agregar un postulante
+        }
+        composable("DetallePostulanteScreen/{postulanteId}") { backStackEntry ->
+            val postulanteId = backStackEntry.arguments?.getString("postulanteId")?.toInt()
+            if (postulanteId != null) {
+                DetallePostulanteActivity(postulanteId = postulanteId, navController = navController)
+            }
+        }
+    }
+}
+
+@Composable
+fun MainScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val arregloPostulante = ArregloPostulante(context)
     var apellidoFiltro by remember { mutableStateOf("") }
     var listaPostulantes by remember { mutableStateOf(listOf<Postulante>()) }
-    val context = LocalContext.current
     val dbHelper = initBD(context)
+    val coroutineScope = rememberCoroutineScope()
+
+    // Cargar la lista de postulantes cuando la pantalla se inicializa
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            listaPostulantes = arregloPostulante.obtenerTodosLosPostulantes() // Cargar postulantes desde la base de datos
+        }
+    }
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color(0xFFFFF9FB)
@@ -118,7 +175,7 @@ fun MainActivity(navController: NavController = rememberNavController()) {
             )
 
             // Usar AdaptadorPostulante para mostrar la lista
-            AdaptadorPostulante(listaPostulantes)
+            AdaptadorPostulante(listaPostulantes, navController = navController)
         }
         }
 
